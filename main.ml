@@ -179,6 +179,16 @@ let rotate l i =
         else aux ((List.length l) - (abs i)) [] l 
 
 
+let insert_at e i l = 
+    if i >= List.length l then l@[e]
+    else
+        let rec aux e c acc = function 
+        | [] -> List.rev acc 
+        | hd::tl as k -> if c > 0 then aux e (c-1) (hd::acc) tl 
+                         else (List.rev (e::acc))@k 
+    in 
+        aux e i [] l 
+
 
 let reposition a i = 
     let _ = Random.self_init in 
@@ -216,6 +226,7 @@ let _ =
         | Some (x, y) -> Printf.printf "%d,%d\n" x y 
       end; 
       let l = append_list a b in 
+      let il = insert_at 8 5 a in 
       let rotate = rotate a (-3) in 
     (*
       let (ls, rs) = split a 3 in 
@@ -226,7 +237,7 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
-          print_list rotate
+          print_list il 
 
     | _      -> exit 1 
 
