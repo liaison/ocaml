@@ -145,7 +145,7 @@ let replicate l t =
 
 
 (* Drop every t'th element from the list *)
-let drop l t = 
+let drop_at l t = 
     let rec aux acc n = function 
     | [] -> List.rev acc 
     | hd::tl -> if n = 1 then aux acc t tl 
@@ -190,6 +190,20 @@ let insert_at e i l =
         aux e i [] l 
 
 
+let permutation l = 
+    let extract_rand a = 
+      let _ = Random.self_init in 
+        let i = Random.int (List.length a) in 
+          ((List.nth a i), drop_at a i)
+    in 
+    let rec aux acc = function 
+    | [] -> List.rev acc 
+    | k  -> let (picked, rest) = extract_rand k in 
+            aux (picked::acc) rest 
+    in 
+      aux [] l 
+
+
 let reposition a i = 
     let _ = Random.self_init in 
     let j = i + Random.int ((Array.length a)-i) in 
@@ -208,6 +222,34 @@ let shuffle l =
       Array.to_list a
 
 
+type 'a b_tree = 
+  | Empty 
+  | Node of 'a * 'a b_tree * 'a b_tree 
+;; 
+
+
+(* Construct a binary search tree from a list of integer numbers *)
+let construct l = 
+    let rec add_node tree list = 
+    match list with 
+    | [] -> tree 
+    | hd::tl -> 
+        match tree with 
+        | Empty -> add_node (Node(hd, Empty, Empty)) tl
+        | Node(a, l, r) -> if hd <= a then Node(a, (add_node l list), r)
+                           else Node(a, l, (add_node r list))
+    in
+      add_node Empty l 
+
+
+let rec print_b_tree tree = 
+    match tree with 
+    | Empty -> print_string "Empty"
+    | Node(a, l, r) -> Printf.printf "Node(%d," a; 
+                       print_b_tree l; print_string ",";  
+                       print_b_tree r; print_endline ")"
+
+
 let print_list l = 
     List.iter (Printf.printf "%d ") l;
     print_endline ""
@@ -220,15 +262,18 @@ let _ =
     | 1 | 2  -> 
       let a = [ 1; 2; 3; 4; 5] in 
       let b = [6; 7; 8] in
+      let c = [7; 6; 8] in
       begin 
         match (last_two [1]) with 
         | None -> print_endline "None"
         | Some (x, y) -> Printf.printf "%d,%d\n" x y 
       end; 
+      let perm = permutation a in 
+      let b_tree = construct c in 
+    (*
       let l = append_list a b in 
       let il = insert_at 8 5 a in 
       let rotate = rotate a (-3) in 
-    (*
       let (ls, rs) = split a 3 in 
       let shuffle = shuffle l in 
       let cl = compress2 l in 
@@ -237,12 +282,10 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
-          print_list il 
+          print_list perm;
+          print_b_tree b_tree
 
     | _      -> exit 1 
-
-
-
 
 
 
