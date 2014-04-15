@@ -228,18 +228,35 @@ type 'a b_tree =
 ;; 
 
 
-(* Construct a binary search tree from a list of integer numbers *)
+(* Something wrong with the following function! *)
 let construct l = 
-    let rec add_node tree list = 
+    let rec aux root list = 
     match list with 
-    | [] -> tree 
+    | [] -> root
     | hd::tl -> 
-        match tree with 
-        | Empty -> add_node (Node(hd, Empty, Empty)) tl
-        | Node(a, l, r) -> if hd <= a then Node(a, (add_node l list), r)
-                           else Node(a, l, (add_node r list))
+        match root with 
+        | Empty -> aux (Node(hd, Empty, Empty)) tl
+        | Node(a, l, r) -> if hd <= a then Node(a, (aux l list), r)
+                           else Node(a, l, (aux r list))
     in
-      add_node Empty l 
+      aux Empty l 
+
+
+(* Construct a binary search tree from a list of integer numbers *)
+let construct2 l = 
+    let rec insert tree value = match tree with 
+    | Empty -> Node(value, Empty, Empty) 
+    | Node(a, l, r) -> if value = a then tree 
+                       else if value < a then Node(a, (insert l value), r)
+                       else Node(a, l, (insert r value))
+    in 
+      List.fold_left insert Empty l
+
+
+let rec count_leaves tree = match tree with  
+    | Empty -> 0 
+    | Node(_, Empty, Empty) -> 1
+    | Node(_, l, r) -> (count_leaves l) + (count_leaves r)
 
 
 let rec print_b_tree tree = 
@@ -248,6 +265,16 @@ let rec print_b_tree tree =
     | Node(a, l, r) -> Printf.printf "Node(%d," a; 
                        print_b_tree l; print_string ",";  
                        print_b_tree r; print_endline ")"
+
+
+(* The greatest common dividor *)
+let rec gcd a b = 
+    if b = 0 then a 
+    else gcd b (a mod b) 
+
+
+let is_coprime a b = 
+    if gcd a b = 1 then true else false 
 
 
 let print_list l = 
@@ -263,13 +290,14 @@ let _ =
       let a = [ 1; 2; 3; 4; 5] in 
       let b = [6; 7; 8] in
       let c = [7; 6; 8] in
+      let m = 9 and n = 3 in
       begin 
         match (last_two [1]) with 
         | None -> print_endline "None"
         | Some (x, y) -> Printf.printf "%d,%d\n" x y 
       end; 
       let perm = permutation a in 
-      let b_tree = construct c in 
+      let b_tree = construct2 a in 
     (*
       let l = append_list a b in 
       let il = insert_at 8 5 a in 
@@ -283,7 +311,10 @@ let _ =
       let sl = rev l in  
      *)
           print_list perm;
-          print_b_tree b_tree
+          print_list perm;
+          print_b_tree b_tree;
+
+          Printf.printf "%s\n" (string_of_bool (is_coprime m n))
 
     | _      -> exit 1 
 
