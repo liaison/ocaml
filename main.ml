@@ -118,7 +118,6 @@ let encode l =
     | [x] -> ((List.length cur), x)::acc 
     | a::(b::_ as tl) -> if a = b then aux (a::cur) acc tl
                          else aux [] ((((List.length cur)+1), a)::acc) tl
-    
     in List.rev (aux [] [] l) 
 
 
@@ -199,7 +198,8 @@ let permutation l =
           ((List.nth a i), drop_at a i)
     in 
     let rec aux acc = function 
-    | [] -> List.rev acc 
+    (*It doesnot seem to be necessary to reverse the list*)
+    | [] -> List.rev acc  
     | k  -> let (picked, rest) = extract_rand k in 
             aux (picked::acc) rest 
     in 
@@ -207,7 +207,6 @@ let permutation l =
 
 
 let reposition a i = 
-    let _ = Random.self_init in 
     let j = i + Random.int ((Array.length a)-i) in 
       if j != i then let tmp = a.(j) in 
                      let _ = a.(j) <- a.(i) in 
@@ -216,6 +215,7 @@ let reposition a i =
 
 
 let shuffle l = 
+    let _ = Random.self_init in 
     let a = Array.of_list l in 
       for i=0 to ((Array.length a)-1) 
       do 
@@ -309,19 +309,20 @@ let _ =
       let perm = permutation a in 
       let b_tree = construct2 a in 
       let sl = sublist 3 7 a in 
+      let shuffle = shuffle a in 
     (*
       let l = append_list a b in 
       let il = insert_at 8 5 a in 
       let rotate = rotate a (-3) in 
       let (ls, rs) = split a 3 in 
-      let shuffle = shuffle l in 
+
       let cl = compress2 l in 
       let pl = pack2 l in 
       let rl = replicate a 2 in 
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
-          print_list sl;
+          print_list shuffle;
           print_b_tree b_tree;
 
           Printf.printf "%s\n" (string_of_bool (is_coprime m n))
