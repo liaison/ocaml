@@ -26,9 +26,9 @@ let length l =
 
 
 let rev l = 
-    let rec aux r = function 
-    | [] -> r 
-    | hd::tl -> aux (hd::r) tl  
+    let rec aux acc = function 
+    | [] -> acc
+    | hd::tl -> aux (hd::acc) tl  
     in aux [] l 
 
 
@@ -38,20 +38,22 @@ let is_palindrome l =
 (* Get a sublist from the list 'l', 
    starting from the index 's' to 'e'.
    whether to include 'e' is easy to adapt. *)
-let rec sublist s e l =
-    if s > e then [] 
+let rec sublist si ei list =
+    if si > ei then []
+    else if si >= List.length list then [] 
     else
-        match l with 
+        let rec aux s e = function 
         | []     -> []
         | hd::tl ->
-          let next = sublist (s-1) (e-1) tl in  
+          let next = aux (s-1) (e-1) tl in  
             (* move forwards till the case s=0 *)
             if s > 0 then next
             else
               (* move forwards till e=0, in the right zone *)
               if e > 0 then hd::next
               else []
-
+        in 
+          aux si ei list 
 
 let rec append_list a b = 
     match a with 
@@ -277,6 +279,14 @@ let is_coprime a b =
     if gcd a b = 1 then true else false 
 
 
+let is_prime n = 
+    let a = abs n in 
+    let rec is_not_divisor m = 
+      m*m > a || ((a mod m) <>0 && is_not_divisor (m+1)) 
+    in 
+      n <> 1 && is_not_divisor 2 
+
+
 let print_list l = 
     List.iter (Printf.printf "%d ") l;
     print_endline ""
@@ -298,6 +308,7 @@ let _ =
       end; 
       let perm = permutation a in 
       let b_tree = construct2 a in 
+      let sl = sublist 3 7 a in 
     (*
       let l = append_list a b in 
       let il = insert_at 8 5 a in 
@@ -310,8 +321,7 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
-          print_list perm;
-          print_list perm;
+          print_list sl;
           print_b_tree b_tree;
 
           Printf.printf "%s\n" (string_of_bool (is_coprime m n))
