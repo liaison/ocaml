@@ -272,6 +272,7 @@ let rec print_b_tree tree =
 (* The greatest common dividor *)
 let rec gcd a b = 
     if b = 0 then a 
+    (* if b > a then gcd b a   Need to do so! *) 
     else gcd b (a mod b) 
 
 
@@ -310,8 +311,9 @@ let rec quick_sort l =
     | []  -> []
     (*this is the essential bottom case, otherwise dead-loop *)
     | [x] -> [x]  
-    | hd::tl -> let (left, right) = partition l hd in 
-                (quick_sort left) @ (quick_sort right)
+    | pivot::tl -> 
+      let (left, right) = partition l pivot in 
+          (quick_sort left) @ (quick_sort right)
 
 
 let rec quick_sort_2 l = 
@@ -322,6 +324,15 @@ let rec quick_sort_2 l =
             right = List.filter (fun x -> x >= pivot) t in 
         (quick_sort_2 left) @ [pivot] @ (quick_sort_2 right) 
 
+
+let rec quick_sort_3 l =
+    match l with
+    | []  -> []
+    (*this is the essential bottom case, otherwise dead-loop *)
+    | [x] -> [x]  
+    | pivot::tl -> 
+      let (left, right) = List.partition (fun x -> x < pivot) tl in 
+          (quick_sort_3 left) @ pivot::(quick_sort_3 right)
 
 (* The main function. The entrance of the program. *)
 
@@ -341,7 +352,7 @@ let _ =
       let perm = permutation a in 
       let b_tree = construct2 a in 
       let sl = sublist 3 7 a in 
-      let ql = quick_sort_2 s in 
+      let ql = quick_sort_3 s in 
       let shuffle = shuffle a in 
     (*
       let l = append_list a b in 
