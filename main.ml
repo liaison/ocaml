@@ -292,12 +292,44 @@ let print_list l =
     print_endline ""
 
 
+(* Partition a list into two parts, according to the pivot *)
+let partition l p = 
+    let rec aux acc list pivot = 
+      match list with 
+      | [] -> acc 
+      | h::t -> let (left, right) = acc in 
+                  if pivot >= h 
+                  then aux (h::left, right) t pivot 
+                  else aux (left, h::right) t pivot 
+    in 
+    aux ([], []) l p 
+
+
+let rec quick_sort l =
+    match l with
+    | []  -> []
+    (*this is the essential bottom case, otherwise dead-loop *)
+    | [x] -> [x]  
+    | hd::tl -> let (left, right) = partition l hd in 
+                (quick_sort left) @ (quick_sort right)
+
+
+let rec quick_sort_2 l = 
+    match l with 
+    | [] -> []
+    | pivot::t -> 
+        let left  = List.filter (fun x -> x < pivot) t and 
+            right = List.filter (fun x -> x >= pivot) t in 
+        (quick_sort_2 left) @ [pivot] @ (quick_sort_2 right) 
+
+
 (* The main function. The entrance of the program. *)
 
 let _ =
     match Array.length Sys.argv with 
     | 1 | 2  -> 
       let a = [ 1; 2; 3; 4; 5] in 
+      let s = [ 3; 2; 1; 4; 5] in 
       let b = [6; 7; 8] in
       let c = [7; 6; 8] in
       let m = 9 and n = 3 in
@@ -309,6 +341,7 @@ let _ =
       let perm = permutation a in 
       let b_tree = construct2 a in 
       let sl = sublist 3 7 a in 
+      let ql = quick_sort_2 s in 
       let shuffle = shuffle a in 
     (*
       let l = append_list a b in 
@@ -322,9 +355,9 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
+          print_list ql;
           print_list shuffle;
           print_b_tree b_tree;
-
           Printf.printf "%s\n" (string_of_bool (is_coprime m n))
 
     | _      -> exit 1 
