@@ -145,7 +145,9 @@ let replicate l t =
       aux [] t l
 
 
-(* Drop every t'th element from the list *)
+(* Drop every t'th element from the list.
+   BUGGY!  the index of the first element is 1. 
+*)
 let drop_at l t = 
     let rec aux acc n = function 
     | [] -> List.rev acc 
