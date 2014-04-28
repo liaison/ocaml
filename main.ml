@@ -106,7 +106,7 @@ let pack2 l =
     | [] -> List.rev acc  
     | hd::tl -> if (List.length cur) = 0 then aux [hd] acc tl 
                 else 
-                  if hd = (List.nth cur 0) then aux (hd::cur) acc tl 
+                  if hd = (List.hd cur) then aux (hd::cur) acc tl 
                   else aux [hd] (cur::acc) tl 
     in aux [] [] l 
 
@@ -170,6 +170,7 @@ let split l n =
         aux n [] [] l 
 
 
+(* Rotate the sublist starting from i to the beginning. *)
 let rotate l i = 
     if abs i >= List.length l then l 
     else 
