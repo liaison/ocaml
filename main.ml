@@ -38,7 +38,7 @@ let is_palindrome l =
 (* Get a sublist from the list 'l', 
    starting from the index 's' to 'e'.
    whether to include 'e' is easy to adapt. *)
-let rec sublist si ei list =
+let sublist si ei list =
     if si > ei then []
     else if si >= List.length list then [] 
     else
@@ -54,6 +54,22 @@ let rec sublist si ei list =
               else []
         in 
           aux si ei list 
+
+
+(* a tail-recursive version of the sublist function. *)
+let sublist_2 si ei list = 
+    if si > ei then []
+    else if si >= List.length list then []
+    else 
+        let rec aux acc s e = function 
+            | [] -> List.rev acc 
+            | hd::tl -> 
+                if si > 0 then aux acc (s-1) (e-1) tl 
+                else if ei > 0 then aux (hd::acc) (s-1) (e-1) tl 
+                else [] 
+        in 
+          aux [] si ei list 
+
 
 let rec append_list a b = 
     match a with 
