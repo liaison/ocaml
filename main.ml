@@ -77,6 +77,24 @@ let rec append_list a b =
     | hd::tl -> hd::(append_list tl b) 
 
 
+(* Calculate Fibonacci number. Complexity O(N^2) size of complete b-tree. *)
+let rec fib n = 
+    if n <= 0 then 0 
+    else if n = 1 || n = 2 then 1 
+    else (fib (n-1)) + (fib (n-2))
+
+
+(* Complexity O(N) *)
+let fib_2 n = 
+    if n <= 0 then 0 
+    else 
+    let rec aux f1 f2 c = 
+      if c <= 0 then f2 
+      else aux f2 (f1+f2) (c-1) 
+    in 
+      aux 0 1 (n-1) 
+
+
 type 'a node = 
     | One of 'a 
     | Many of 'a node list ;; 
@@ -385,6 +403,7 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
+          Printf.printf "fib %d: %d\n" 10 (fib_2 10); 
           print_list ql;
           print_list shuffle;
           print_b_tree b_tree;
