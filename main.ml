@@ -309,7 +309,7 @@ let rec print_b_tree tree =
 (* The greatest common dividor *)
 let rec gcd a b = 
     if b = 0 then a 
-    (* if b > a then gcd b a   Need to do so! *) 
+    (* if b > a then gcd b a   No need to do so! *) 
     else gcd b (a mod b) 
 
 
