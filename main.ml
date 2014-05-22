@@ -64,9 +64,9 @@ let sublist_2 si ei list =
         let rec aux acc s e = function 
             | [] -> List.rev acc 
             | hd::tl -> 
-                if si > 0 then aux acc (s-1) (e-1) tl 
-                else if ei > 0 then aux (hd::acc) (s-1) (e-1) tl 
-                else [] 
+                if s > 0 then aux acc (s-1) (e-1) tl 
+                else if e > 0 then aux (hd::acc) (s-1) (e-1) tl 
+                else List.rev acc 
         in 
           aux [] si ei list 
 
@@ -325,7 +325,8 @@ let is_prime n =
       n <> 1 && is_not_divisor 2 
 
 
-let print_list l = 
+let print_list header l = 
+    print_string header;
     List.iter (Printf.printf "%d ") l;
     print_endline ""
 
@@ -373,6 +374,46 @@ let rec quick_sort_3 l =
 
 (* The main function. The entrance of the program. *)
 
+
+(* Given a list, return a list of tuple (i, v, max_i, max_v):
+   i: the index of each element.
+   v: the value of the element at i. 
+   max_i: the index of the max element following the element 'i'.
+   mav_v: the value of the max element. *)
+let best_sell_list l = 
+    let size = List.length l in 
+    let (hd, res) =  
+        List.fold_right 
+        (fun a ((c, i, mi, mv), acc) -> 
+            let item = 
+                if a > mv then (c-1, a, c-1, a) 
+                else (c-1, a, mi, mv) in 
+            (item, item::acc)
+        )  
+        l ((size, 0, 0, min_int), []) 
+    in 
+      res
+
+(* Find the best buy and sell point to maximize the profit. *)
+let best_buy_and_sell l = 
+    let bslist = best_sell_list l in 
+    List.fold_left 
+        (fun (ai, av, ami, amv) (bi, bv, bmi, bmv) -> 
+            let adiff = amv - av and 
+                bdiff = bmv - bv in 
+            if bdiff > adiff 
+            then (bi, bv, bmi, bmv)
+            else (ai, av, ami, amv)
+        )
+        (0, 0, 0, min_int) bslist
+
+
+let print_best_sell_list l = 
+    List.iter 
+    (fun (i, v, mi, mv) -> 
+        Printf.printf "%d, %d: %d, %d\n" i v mi mv) l 
+
+
 let _ =
     match Array.length Sys.argv with 
     | 1 | 2  -> 
@@ -380,6 +421,7 @@ let _ =
       let s = [ 3; 2; 1; 4; 5] in 
       let b = [6; 7; 8] in
       let c = [7; 6; 8] in
+      let d = [ 3; 2; 5; 4; 1] in 
       let m = 9 and n = 3 in
       begin 
         match (last_two [1]) with 
@@ -388,7 +430,7 @@ let _ =
       end; 
       let perm = permutation a in 
       let b_tree = construct2 a in 
-      let sl = sublist 3 7 a in 
+      let sl = sublist_2 3 7 a in 
       let ql = quick_sort_3 s in 
       let shuffle = shuffle a in 
     (*
@@ -403,11 +445,15 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
-          Printf.printf "fib %d: %d\n" 10 (fib_2 10); 
-          print_list ql;
-          print_list shuffle;
-          print_b_tree b_tree;
-          Printf.printf "%s\n" (string_of_bool (is_coprime m n))
+      print_list "input:" d;
+      print_best_sell_list (best_sell_list d);    
+      print_endline "best_buy_and_sell_point:";
+      print_best_sell_list [best_buy_and_sell d];
+      Printf.printf "fib %d: %d\n" 10 (fib_2 10); 
+      print_list "sublist:" sl;
+      print_list "shuffle:" shuffle;
+      print_b_tree b_tree;
+      Printf.printf "%s\n" (string_of_bool (is_coprime m n))
 
     | _      -> exit 1 
 
