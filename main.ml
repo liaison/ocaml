@@ -95,6 +95,24 @@ let fib_2 n =
       aux 0 1 (n-1) 
 
 
+(* Get the combination of K elements from a list of N elements. *)
+let rec comb l k = 
+    if k <= 0 then []
+    else if k > List.length l then [] 
+    else if k = List.length l then [l] 
+    else 
+    (* Subfunction: add the element a to each list element in l *)
+    let rec add_to_each l a = 
+        match l with
+        | [] -> [[a]]
+        | [x]-> [a::x]   (* avoid an additional add by recursion. *)
+        | hd::tl -> (a::hd)::(add_to_each tl a)
+    in 
+    match l with
+    | hd::tl -> let r = comb tl (k-1) in 
+                (add_to_each r hd)@(comb tl k)
+
+
 type 'a node = 
     | One of 'a 
     | Many of 'a node list ;; 
@@ -331,6 +349,10 @@ let print_list header l =
     print_endline ""
 
 
+let print_list_of_list header l = 
+    List.iter (print_list header) l
+
+
 (* Partition a list into two parts, according to the pivot *)
 let partition l p = 
     let rec aux acc list pivot = 
@@ -418,6 +440,7 @@ let _ =
     match Array.length Sys.argv with 
     | 1 | 2  -> 
       let a = [ 1; 2; 3; 4; 5] in 
+      let cb = comb a 2 in
       let s = [ 3; 2; 1; 4; 5] in 
       let b = [6; 7; 8] in
       let c = [7; 6; 8] in
@@ -445,6 +468,7 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
+      print_list_of_list "#" cb;
       print_list "input:" d;
       print_best_sell_list (best_sell_list d);    
       print_endline "best_buy_and_sell_point:";
