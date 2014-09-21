@@ -436,6 +436,38 @@ let print_best_sell_list l =
         Printf.printf "%d, %d: %d, %d\n" i v mi mv) l 
 
 
+let print_distance_max_result r = 
+    match r with
+    | (minIn, maxIn, maxDiff)
+      -> Printf.printf "minIndex: %d, maxIndex: %d, maxDiff: %d\n"
+          minIn maxIn maxDiff 
+
+
+(* Distance maximizing problem, i.e. best buy and sell points *)
+let distance_max_index = function 
+    | []  -> (-1, -1, -1)
+    | [x] -> (-1, -1, -1)
+    | a::b::tl -> 
+        let rec aux minIn maxIn curMin maxDiff c l = 
+          match l with 
+          | [] -> (minIn, maxIn, maxDiff)
+          | hd::tl -> 
+              let dis = hd - curMin in 
+              let newMaxDiff = 
+                  if dis > maxDiff then dis else maxDiff in 
+              let newCurMin = 
+                  if hd < curMin then hd else curMin in
+              let newMinIn = 
+                  if hd = newCurMin then c else minIn in
+              let newMaxIn = 
+                  if dis = newMaxDiff then c else maxIn 
+              in
+                aux newMinIn newMaxIn newCurMin newMaxDiff (c+1) tl 
+         in
+           if a < b then aux 1 2     a (b-a) 3 tl
+           else          aux 2 (-1)  b    0  3 tl
+
+
 let _ =
     match Array.length Sys.argv with 
     | 1 | 2  -> 
@@ -468,6 +500,7 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
+      print_distance_max_result (distance_max_index a);
       print_list_of_list "#" cb;
       print_list "input:" d;
       print_best_sell_list (best_sell_list d);    
