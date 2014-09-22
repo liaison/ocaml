@@ -95,7 +95,10 @@ let fib_2 n =
       aux 0 1 (n-1) 
 
 
-(* Get the combination of K elements from a list of N elements. *)
+(* Get all the possible combination of K elements from a list of N elements. 
+ *  
+ * Complexity: N^k ? 
+ *)
 let rec comb l k = 
     if k <= 0 then []
     else if k > List.length l then [] 
@@ -111,6 +114,23 @@ let rec comb l k =
     match l with
     | hd::tl -> let r = comb tl (k-1) in 
                 (add_to_each r hd)@(comb tl k)
+
+
+(* vectorize the list into a list of sublist with the size of K. 
+ * Complexity: N
+ *)
+let vectorize k l = 
+    if k <= 0 then []
+    else if k >= List.length l then [l]
+    else
+      let rec aux acc vec c = function
+        | [] -> List.rev (vec::acc)
+        | (hd::tl as w) -> if c > 0 then 
+                      aux acc (hd::vec) (c-1) tl
+                    else 
+                      aux ((List.rev vec)::acc) [] k w
+      in
+        aux [] [] k l
 
 
 type 'a node = 
@@ -487,6 +507,7 @@ let _ =
     match Array.length Sys.argv with 
     | 1 | 2  -> 
       let a = [ 1; 2; 3; 4; 5] in 
+      (* let cb = vectorize 2 a in *)
       let cb = comb a 2 in
       let s = [ 3; 2; 1; 4; 5] in 
       let b = [6; 7; 8] in
