@@ -468,6 +468,21 @@ let distance_max_index = function
            else          aux 2 (-1)  b    0  3 tl
 
 
+let trim_str str = 
+    let rec aux s i acc = 
+        if i >= (String.length s) - 1  then
+          List.rev acc
+        else 
+          if ' ' = s.[i] && ' ' = s.[i+1] then
+            aux s (i+1) acc
+          else
+            aux s (i+1) (s.[i]::acc) 
+    in 
+      aux str 0 []
+
+
+
+
 let _ =
     match Array.length Sys.argv with 
     | 1 | 2  -> 
@@ -500,6 +515,12 @@ let _ =
       let dl = drop rl 2 in 
       let sl = rev l in  
      *)
+
+      let str_test = "  a  b   c  " in 
+      let str_array = trim_str str_test in 
+      List.iter (Printf.printf "%c") str_array;
+      print_endline "@string_end";
+
       print_distance_max_result (distance_max_index a);
       print_list_of_list "#" cb;
       print_list "input:" d;
