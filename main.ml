@@ -470,8 +470,8 @@ let distance_max_index = function
 
 let trim_str str = 
     let rec aux s i acc = 
-        if i >= (String.length s) - 1  then
-          List.rev acc
+        if i = (String.length s) - 1  then
+          List.rev (s.[i]::acc)
         else 
           if ' ' = s.[i] && ' ' = s.[i+1] then
             aux s (i+1) acc
@@ -516,7 +516,7 @@ let _ =
       let sl = rev l in  
      *)
 
-      let str_test = "  a  b   c  " in 
+      let str_test = "  a  b   c" in 
       let str_array = trim_str str_test in 
       List.iter (Printf.printf "%c") str_array;
       print_endline "@string_end";
