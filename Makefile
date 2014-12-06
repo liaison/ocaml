@@ -6,7 +6,8 @@
 # Date:    8 April, 2014
 #
 
-# 'native_code' or 'byte_code' 
+# 'native_code' or 'byte_code', the 'byte_code" mode would allow one to use debugging tools.
+#OUTPUT := native_code
 OUTPUT := byte_code
 
 ifeq ($(OUTPUT), byte_code)
@@ -31,7 +32,7 @@ DEPENDENCIES=$(shell touch .depend)
 TARGET=a.out
 
 
-# Put the entrance program at the end of the list for sake of compiling
+# Put the entrance program at the end of the list for the sake of compiling
 MAIN_SOURCE_FILE=main.ml
 SOURCES=$(shell ls *.ml | grep -v $(MAIN_SOURCE_FILE)) $(MAIN_SOURCE_FILE)
 OBJECTS_PAT=*.cmi *.cmo *.cmx *.o *.mli
