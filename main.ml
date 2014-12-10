@@ -32,6 +32,21 @@ let rev l =
     in aux [] l 
 
 
+let rec count_digit i = 
+    let remain = i / 10 in 
+      if remain = 0 then 1 
+      else 1+(count_digit remain)
+
+(*
+let rec reverseInt i = 
+    let digit = i mod 10.0 in 
+    let remain = i / 10.0 in 
+    let rev_remain = reverseInt remain in 
+    let num_digit = count_digit rev_remain in 
+        digit * (10.0 ** (num_digit+1)) + rev_remain
+*)
+
+
 let is_palindrome l = 
     l = List.rev l 
 
@@ -541,6 +556,9 @@ let _ =
       let str_array = trim_str str_test in 
       List.iter (Printf.printf "%c") str_array;
       print_endline "@string_end";
+      
+      let rev_i = 21 in 
+      Printf.printf "%d:  num of digits:%d\n" rev_i (count_digit rev_i);
 
       print_distance_max_result (distance_max_index a);
       print_list_of_list "#" cb;
